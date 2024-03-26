@@ -1,5 +1,7 @@
-load ("occupancy_map50.mat")
-Map = occupancyMap(omap);
+%DL/VFH/RRT/A*
+%--------------------------------------------------------------------------------
+
+
 
 start_x = 5;
 start_y = 8;
@@ -11,4 +13,8 @@ goal_orientation = 0;
 
 robot_pose = [start_x start_y start_orientation];
 goal_pose = [goal_x goal_y goal_orientation];
+%------------------------------------------------------------------------------------
 
+
+%DL
+RequiredMaps = 100000
