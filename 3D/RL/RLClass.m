@@ -32,27 +32,32 @@ classdef RLClass < handle
                 maxValue = max(SurroundingMatrix(:));
                 [row, col, page] = ind2sub(size(SurroundingMatrix), find(SurroundingMatrix == maxValue));
                 MaxValueIndexes = [row col page];
-                randomRowIndex = randi(size(MaxValueIndexes, 1));
-                randomRow = MaxValueIndexes(randomRowIndex, :);
-                localCenter = CenterData(self, AgentState);
-                TransformationData = randomRow -localCenter;
-                AgentState = AgentState + TransformationData;
-        
+                while true
+                    randomRowIndex = randi(size(MaxValueIndexes, 1));
+                    randomRow = MaxValueIndexes(randomRowIndex, :);
+                    localCenter = CenterData(self, AgentState);
+                    TransformationData = randomRow -localCenter;
+                    AgentState = AgentState + TransformationData;
+                
+                    if AgentState(1) <= size(self.Q_Table, 1) && AgentState(2) <= size(self.Q_Table, 2) && AgentState(3) <= size(self.Q_Table, 3)
+                        break                      
+                    end
+                end
         
                 if isequal(AgentState, self.EndState)
                     next_state = AgentState;
                     reward = 100;
-                    done = true;
+                    done = 1;
                     goal = true;
-                elseif self.Q_Table(AgentState(1), AgentState(2), AgentState(3)) == -Inf
+                elseif self.Q_Table(AgentState(1), AgentState(2), AgentState(3)) == -100
                     next_state = AgentState;
                     reward = -100;
-                    done = true;
+                    done = -1;
                     goal = false;
                 else
                     next_state = AgentState;
-                    reward = -0.02;
-                    done = false;
+                    reward = -0.2;
+                    done = 0;
                     goal = false;
                 end
             ExistingData = [ExistingData;AgentState];
@@ -62,17 +67,17 @@ classdef RLClass < handle
                 if isequal(AgentState, self.EndState)
                     next_state = AgentState;
                     reward = 100;
-                    done = true;
+                    done = 1;
                     goal = true;
-                elseif self.Q_Table(AgentState(1), AgentState(2), AgentState(3)) == -Inf
+                elseif self.Q_Table(AgentState(1), AgentState(2), AgentState(3)) == -100
                     next_state = AgentState;
                     reward = -100;
-                    done = true;
+                    done = -1;
                     goal = false;
                 else
                     next_state = AgentState;
-                    reward = -0.02;
-                    done = false;
+                    reward = -0.2;
+                    done = 0;
                     goal = false;
                 end
             ExistingData = [ExistingData;AgentState];
@@ -83,12 +88,13 @@ classdef RLClass < handle
             matrix_size = size(self.Q_Table);
             matrix = self.Q_Table;
         
-            % Generate random row, column, and depth indices within the matrix
+            % Beállítjuk, hogy melyik az éppen megfelelő érték ami köré
+            % falat akarunk vonni
             random_row = obsx;
             random_col = obsy;
             random_depth = obsz;
         
-            % Define the size of the surrounding matrix
+            % Mennyi körülötte lévő mezőre vagyunk kíváncsiak
             surrounding_size = 1;
                 
             % Calculate the range for extraction
@@ -96,7 +102,7 @@ classdef RLClass < handle
             col_range = max(1, random_col - surrounding_size):min(matrix_size(2), random_col + surrounding_size);
             depth_range = max(1, random_depth - surrounding_size):min(matrix_size(3), random_depth + surrounding_size);
         
-            % Extract the surrounding matrix
+            
             surroundingmatrix = matrix(row_range, col_range, depth_range);
         
         end
@@ -109,10 +115,45 @@ classdef RLClass < handle
             elseif AgentState(1) == 1 && AgentState(2) == 1 && AgentState(3)==2
                 localCenter = [1 1 2];
             elseif AgentState(1) == 1 && AgentState(2) == 1 && AgentState(3)==3
-                localCenter = [1 1 3];
+                localCenter = [1 1 2];
             elseif AgentState(1) == 1 && AgentState(2) == 1 && AgentState(3)==4
-                localCenter = [1 1 4];
+                localCenter = [1 1 2];
+            elseif AgentState(1) == 1 && AgentState(2) == 1 && AgentState(3)==5
+                localCenter = [1 1 2];
+            elseif AgentState(1) == 1 && AgentState(2) == 1 && AgentState(3)==6
+                localCenter = [1 1 2];
         
+            %Ahol az értékek a jobb szélső sarokban vannak
+            elseif AgentState(1) == 1 && AgentState(3)==50 && AgentState(2) == 1
+                localCenter = [1 2 1];
+            elseif AgentState(1) == 1 && AgentState(2) == 50 && AgentState(3)==2
+                localCenter = [1 2 2];
+            elseif AgentState(1) == 1 && AgentState(2) == 50 && AgentState(3)==3
+                localCenter = [1 2 2];
+            elseif AgentState(1) == 1 && AgentState(2) == 50 && AgentState(3)==4
+                localCenter = [1 2 2];
+            elseif AgentState(1) == 1 && AgentState(2) == 50 && AgentState(3)==5
+                localCenter = [1 2 2];
+            elseif AgentState(1) == 1 && AgentState(2) == 50 && AgentState(3)==6
+                localCenter = [1 2 2];
+
+
+             %Ahol az értékek a bal alsó sarokban vannak
+            elseif AgentState(1) == 50 && AgentState(3)==1 && AgentState(2) == 1
+                localCenter = [2 1 1];
+            elseif AgentState(1) == 50 && AgentState(2) == 1 && AgentState(3)==2
+                localCenter = [2 1 2];
+            elseif AgentState(1) == 50 && AgentState(2) == 1 && AgentState(3)==3
+                localCenter = [2 1 2];
+            elseif AgentState(1) == 50 && AgentState(2) == 1 && AgentState(3)==4
+                localCenter = [2 1 2];
+            elseif AgentState(1) == 50 && AgentState(2) == 1 && AgentState(3)==5
+                localCenter = [2 1 2];
+            elseif AgentState(1) == 50 && AgentState(2) == 1 && AgentState(3)==6
+                localCenter = [2 1 2];
+
+
+
             %Amik az első emeleten a falon vannak
             elseif AgentState(1) == 1 && AgentState(3)==1
                 localCenter = [1 2 1];
@@ -132,14 +173,29 @@ classdef RLClass < handle
                 localCenter = [2 1 2];
             elseif AgentState(1) == 1 && AgentState(3)==3
                 localCenter = [1 2 2];
+            
             %Amikor a 4. emeleti falon van
             elseif AgentState(1) == 1 && AgentState(3)==4
                 localCenter = [1 2 2];
             elseif AgentState(2) == 1 && AgentState(3)==4
                 localCenter = [2 1 2];
+            
+                
+                %Amikor az 5. emeleti falon van
+            elseif AgentState(1) == 1 && AgentState(3)==5
+                localCenter = [1 2 2];
+            elseif AgentState(2) == 1 && AgentState(3)==5
+                localCenter = [2 1 2];
 
-            %Amik nincsenek falon 
-            elseif AgentState(3) == 1
+            %Amikor az 6. emeleti falon van
+            elseif AgentState(1) == 1 && AgentState(3)==6
+                localCenter = [1 2 2];
+            elseif AgentState(2) == 1 && AgentState(3)==6
+                localCenter = [2 1 2];
+
+            %Amik nincsenek falon - Itt arra kell tenni az elsőnél ami a
+            %max a max magassága a rendszernek
+            elseif AgentState(3) == 1 
                 localCenter = [2 2 1];
             else
                 localCenter = [2 2 2];
@@ -159,8 +215,14 @@ classdef RLClass < handle
                 % Check if the randomly chosen index is not equal to the given value
                 if ~isequal([random_row, random_col, random_depth], given_value)
                     % Display the randomly chosen cell index
-                    AgentStateRandom = [random_row random_col, random_depth];
-                    break; % Exit the loop if a suitable index is found
+                    randomRow = [random_row random_col random_depth];
+                    localCenter = CenterData(self, AgentState);
+                    TransformationData = randomRow -localCenter;
+                    AgentStateRandom = AgentState + TransformationData;
+                    if AgentStateRandom(1) <= size(self.Q_Table, 1) && AgentStateRandom(2) <= size(self.Q_Table, 2) && AgentStateRandom(3) <= size(self.Q_Table, 3)
+                        break                      
+                    end
+                    
                 end
             end
         end

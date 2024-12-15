@@ -1,7 +1,6 @@
 function sdot2 = exampleHelperDerivative(t,s,model,desiredPosition,desiredYaw,kp,kd,ki,kyaw)
 % Copyright 2022 The MathWorks, Inc.
 
-s
 
 % global prevError prevTime
 
